@@ -20,26 +20,29 @@
 #endif
 
 static const uint8_t _hidReportDescriptor[] = {
+
   USAGE_PAGE(1),       0x01, // USAGE_PAGE (Generic Desktop)
-  USAGE(1),            0x05, // USAGE (Gamepad)
+  USAGE(1),            0x04, // USAGE (Joystick - 0x04; Gamepad - 0x05; Multi-axis Controller - 0x08)
   COLLECTION(1),       0x01, // COLLECTION (Application)
   USAGE(1),            0x01, //   USAGE (Pointer)
   COLLECTION(1),       0x00, //   COLLECTION (Physical)
   REPORT_ID(1),        0x01, //     REPORT_ID (1)
-  // ------------------------------------------------- Buttons (1 to 14)
+  // ------------------------------------------------- Buttons (1 to 32)
   USAGE_PAGE(1),       0x09, //     USAGE_PAGE (Button)
   USAGE_MINIMUM(1),    0x01, //     USAGE_MINIMUM (Button 1)
-  USAGE_MAXIMUM(1),    0x0e, //     USAGE_MAXIMUM (Button 14)
+  USAGE_MAXIMUM(1),    0x20, //     USAGE_MAXIMUM (Button 32)
   LOGICAL_MINIMUM(1),  0x00, //     LOGICAL_MINIMUM (0)
   LOGICAL_MAXIMUM(1),  0x01, //     LOGICAL_MAXIMUM (1)
   REPORT_SIZE(1),      0x01, //     REPORT_SIZE (1)
-  REPORT_COUNT(1),     0x0e, //     REPORT_COUNT (14)
-  HIDINPUT(1),         0x02, //     INPUT (Data, Variable, Absolute) ;14 button bits
+  REPORT_COUNT(1),     0x20, //     REPORT_COUNT (32)
+  HIDINPUT(1),         0x02, //     INPUT (Data, Variable, Absolute) ;32 button bits
+
   // ------------------------------------------------- Padding
-  REPORT_SIZE(1),      0x01, //     REPORT_SIZE (1)
-  REPORT_COUNT(1),     0x02, //     REPORT_COUNT (2)
-  HIDINPUT(1),         0x03, //     INPUT (Constant, Variable, Absolute) ;2 bit padding
+//  REPORT_SIZE(1),      0x01, //     REPORT_SIZE (1)
+//  REPORT_COUNT(1),     0x02, //     REPORT_COUNT (2)
+//  HIDINPUT(1),         0x03, //     INPUT (Constant, Variable, Absolute) ;2 bit padding
   // ------------------------------------------------- X/Y position, Z/rZ position
+
   USAGE_PAGE(1),       0x01, //     USAGE_PAGE (Generic Desktop)
   USAGE(1),            0x30, //     USAGE (X)
   USAGE(1),            0x31, //     USAGE (Y)
@@ -94,24 +97,26 @@ void BleGamepad::setAxes(signed char x, signed char y, signed char z, signed cha
 {
   if (this->isConnected())
   {
-    uint8_t m[9];
+    uint8_t m[11];
     m[0] = _buttons;
 	m[1] = (_buttons >> 8);
-    m[2] = x;
-    m[3] = y;
-    m[4] = z;
-    m[5] = rZ;
-	m[6] = (signed char)(rX - 128);
-	m[7] = (signed char)(rY - 128);
-	m[8] = hat;
-	if(m[6]==-128){m[6] = -127;}
-	if(m[7]==-128){m[7] = -127;}
+	m[2] = (_buttons >> 16);
+	m[3] = (_buttons >> 24);
+    m[4] = x;
+    m[5] = y;
+    m[6] = z;
+    m[7] = rZ;
+	m[8] = (signed char)(rX - 128);
+	m[9] = (signed char)(rY - 128);
+	m[10] = hat;
+	if(m[8]==-128){m[8] = -127;}
+	if(m[9]==-128){m[9] = -127;}
     this->inputGamepad->setValue(m, sizeof(m));
     this->inputGamepad->notify();
   }
 }
 
-void BleGamepad::buttons(uint16_t b)
+void BleGamepad::buttons(uint32_t b)
 {
   if (b != _buttons)
   {
@@ -120,17 +125,17 @@ void BleGamepad::buttons(uint16_t b)
   }
 }
 
-void BleGamepad::press(uint16_t b)
+void BleGamepad::press(uint32_t b)
 {
   buttons(_buttons | b);
 }
 
-void BleGamepad::release(uint16_t b)
+void BleGamepad::release(uint32_t b)
 {
   buttons(_buttons & ~b);
 }
 
-bool BleGamepad::isPressed(uint16_t b)
+bool BleGamepad::isPressed(uint32_t b)
 {
   if ((b & _buttons) > 0)
     return true;
