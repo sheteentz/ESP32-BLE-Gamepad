@@ -1,3 +1,9 @@
+Forked from https://github.com/lemmingDev/ESP32-BLE-Gamepad
+
+Only change is added support for 32 buttons instead of 14.
+
+----------------------------------------------------------
+
 # ESP32-BLE-Gamepad
 Bluetooth LE Gamepad library for the ESP32
 
@@ -5,8 +11,8 @@ This library allows you to make the ESP32 act as a Bluetooth Gamepad and control
 
 ## Features
 
- - [x] Button press (14 buttons)
- - [x] Button release (14 buttons)
+ - [x] Button press (32 buttons)
+ - [x] Button release (32 buttons)
  - [x] Axes movement (6 axes (x, y, z, rZ, rX, rY) --> (Left Thumb X, Left Thumb Y, Right Thumb X, Right Thumb Y, Left Trigger, Right Trigger)))
  - [x] Point of view hat (d-pad)
  - [ ] Report optional battery level to host
