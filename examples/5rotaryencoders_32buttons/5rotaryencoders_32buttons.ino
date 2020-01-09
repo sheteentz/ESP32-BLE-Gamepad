@@ -1,46 +1,35 @@
-#include <ESP32Encoder.h>
-#include <Keypad.h>
-#include <BleGamepad.h> 
-
+#include <ESP32Encoder.h>     // https://github.com/madhephaestus/ESP32Encoder/
+#include <Keypad.h>           // https://github.com/Chris--A/Keypad
+#include <BleGamepad.h>       // https://github.com/MagnusThome/ESP32-BLE-Gamepad
 
 
 BleGamepad bleGamepad("RaceKeys", "Arduino", 100);
 
 
-
 ////////////////////// BUTTON MATRIX //////////////////////
-
 #define ROWS 4
 #define COLS 4
-
 // position on panel  UL, UR, LR, LL         UL = upper left   UR = upper right   LR = lower right   LL = lower left
-byte rowPins[ROWS] = {27, 25, 12, 32};
-byte colPins[COLS] = {17, 16, 02, 00};
-
-uint32_t keymap[ROWS][COLS] = {
-  {BUTTON_1, BUTTON_2, BUTTON_3, BUTTON_4 },
-  {BUTTON_5, BUTTON_6, BUTTON_7, BUTTON_8 },
-  {BUTTON_9, BUTTON_10, BUTTON_11, BUTTON_12 },
-  {BUTTON_13, BUTTON_14, BUTTON_15, BUTTON_16 }
+uint8_t rowPins[ROWS] = {27, 25, 12, 32};
+uint8_t colPins[COLS] = {17, 16, 00, 02};
+uint8_t keymap[ROWS][COLS] = {
+  {0,1,2,3},
+  {4,5,6,7},
+  {8,9,10,11},
+  {12,13,14,15}
 };
-
 Keypad customKeypad = Keypad( makeKeymap(keymap), rowPins, colPins, ROWS, COLS); 
 
 
-
-
 //////////// ROTARY ENCODERS (WITH PUSH SWITCHES) ////////////
-
 #define MAXENC 5
-
 // position on panel   UL, UM, UR, LR, LL      UL = upper left   UM = upper middle UR = upper right   LR = lower right   LL = lower left
-byte uppPin[MAXENC] = {36, 22, 39, 34, 19};
-byte dwnPin[MAXENC] = {26, 21, 35, 14, 23};
-byte prsPin[MAXENC] = {18, 15, 33, 13, 05};
-
-uint32_t encoderUpp[MAXENC] = {BUTTON_17, BUTTON_20, BUTTON_23, BUTTON_26, BUTTON_29};
-uint32_t encoderDwn[MAXENC] = {BUTTON_18, BUTTON_21, BUTTON_24, BUTTON_27, BUTTON_30};
-uint32_t encoderPrs[MAXENC] = {BUTTON_19, BUTTON_22, BUTTON_25, BUTTON_28, BUTTON_31};
+uint8_t uppPin[MAXENC] = {36, 22, 39, 34, 19};
+uint8_t dwnPin[MAXENC] = {26, 21, 35, 14, 23};
+uint8_t prsPin[MAXENC] = {18, 15, 33, 13, 05};
+uint8_t encoderUpp[MAXENC] = {16,19,22,25,28};
+uint8_t encoderDwn[MAXENC] = {17,20,23,26,29};
+uint8_t encoderPrs[MAXENC] = {18,21,24,27,30};
 ESP32Encoder encoder[MAXENC];
 unsigned long holdoff[MAXENC] = {0,0,0,0,0};
 int32_t prevenccntr[MAXENC] = {0,0,0,0,0};
@@ -52,18 +41,18 @@ bool prevprs[MAXENC] = {0,0,0,0,0};
 
 
 
-
-
 ////////////////////////////////////////////////////////////////////////////////////////
 
 void setup() {
   Serial.begin(115200);
 
-  for (int8_t i=0; i<MAXENC; i++) {
+  for (uint8_t i=0; i<MAXENC; i++) {
     encoder[i].clearCount();
     encoder[i].attachSingleEdge(dwnPin[i], uppPin[i]);
     pinMode(prsPin[i], INPUT_PULLUP);
   }
+  customKeypad.addEventListener(keypadEvent);
+  //customKeypad.setHoldTime(1);
   bleGamepad.begin();
   Serial.println("Booted!");
 }
@@ -79,7 +68,7 @@ void loop() {
 
   // -- ROTARY ENCODERS : ROTATION -- //
 
-  for (int8_t i=0; i<MAXENC; i++) {
+  for (uint8_t i=0; i<MAXENC; i++) {
     int32_t cntr = encoder[i].getCount();
     if (cntr!=prevenccntr[i]) {
       if (!holdoff[i]) {
@@ -108,48 +97,52 @@ void loop() {
     }
   }
 
-
-
-  // - BUTTON MATRIX - //
-
-  char key = customKeypad.getKey();
-  if (key) { sendKey(key); }
-
+  customKeypad.getKey();    // READ BUTTON MATRIX (EVENT CALLBACK SETUP)
 
   delay(10);
-  
+ 
 }
-
-
 
 
 
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
-void sendKey(uint32_t key) {
-    Serial.print("pulse   0x");
-    Serial.println(key, HEX);
+void keypadEvent(KeypadEvent key){
+  uint8_t keystate = customKeypad.getState();
+  if (keystate==PRESSED)  { pressKey(key); }
+  if (keystate==RELEASED) { releaseKey(key); }
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+
+void sendKey(uint8_t key) {
+    uint32_t gamepadbutton = pow(2,key);      // CONVERT TO THE BINARY MAPPING GAMEPAD KEYS USE
+    Serial.print("pulse\t");
+    Serial.println(key);
     if(bleGamepad.isConnected()) {
-      bleGamepad.press(key);
+      bleGamepad.press(gamepadbutton);
       delay(150);
-      bleGamepad.release(key);
+      bleGamepad.release(gamepadbutton);
     }
 }
 
-void pressKey(uint32_t key) {
-    Serial.print("hold    0x");
-    Serial.println(key, HEX);
+void pressKey(uint8_t key) {
+    uint32_t gamepadbutton = pow(2,key);      // CONVERT TO THE BINARY MAPPING GAMEPAD KEYS USE
+    Serial.print("hold\t");
+    Serial.println(key);
     if(bleGamepad.isConnected()) {
-      bleGamepad.press(key);
+      bleGamepad.press(gamepadbutton);
     }
 }
 
-void releaseKey(uint32_t key) {
-    Serial.print("release 0x");
-    Serial.println(key, HEX);
+void releaseKey(uint8_t key) {
+    uint32_t gamepadbutton = pow(2,key);      // CONVERT TO THE BINARY MAPPING GAMEPAD KEYS USE
+    Serial.print("release\t");
+    Serial.println(key);
     if(bleGamepad.isConnected()) {
-      bleGamepad.release(key);
+      bleGamepad.release(gamepadbutton);
     }
 }
 
