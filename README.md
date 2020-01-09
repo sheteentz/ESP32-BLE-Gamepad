@@ -2,7 +2,7 @@ Forked from https://github.com/lemmingDev/ESP32-BLE-Gamepad
 
 Only changes are:   
 - added support for 32 buttons instead of 14  
-- an example file with 5 rotary encoders (with push switch) and 32 buttons  
+- an example file with 5 rotary encoders (with push switch) plus 16 buttons  
   
 ----------------------------------------------------------
   
