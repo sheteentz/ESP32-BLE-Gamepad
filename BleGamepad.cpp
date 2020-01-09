@@ -44,7 +44,7 @@ static const uint8_t _hidReportDescriptor[] = {
   // ------------------------------------------------- X/Y position, Z/rZ position
 
 // #define JOYSTICKS
-#if definded JOYSTICKS
+#if defined JOYSTICKS
   USAGE_PAGE(1),       0x01, //     USAGE_PAGE (Generic Desktop)
   USAGE(1),            0x30, //     USAGE (X)
   USAGE(1),            0x31, //     USAGE (Y)
