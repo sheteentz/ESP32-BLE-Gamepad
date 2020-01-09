@@ -43,6 +43,8 @@ static const uint8_t _hidReportDescriptor[] = {
 //  HIDINPUT(1),         0x03, //     INPUT (Constant, Variable, Absolute) ;2 bit padding
   // ------------------------------------------------- X/Y position, Z/rZ position
 
+// #define JOYSTICKS
+#if definded JOYSTICKS
   USAGE_PAGE(1),       0x01, //     USAGE_PAGE (Generic Desktop)
   USAGE(1),            0x30, //     USAGE (X)
   USAGE(1),            0x31, //     USAGE (Y)
@@ -71,7 +73,7 @@ static const uint8_t _hidReportDescriptor[] = {
   REPORT_SIZE(1), 	   0x04, //		REPORT_SIZE (4)
   REPORT_COUNT(1), 	   0x02, //		REPORT_COUNT (2)
   HIDINPUT(1), 		   0x02, //		INPUT (Data, Variable, Absolute) ;1 byte Hat1, Hat2
-  
+#endif  
   END_COLLECTION(0),         //   END_COLLECTION
   END_COLLECTION(0)          // END_COLLECTION
 };
