@@ -9,7 +9,6 @@ BleGamepad bleGamepad("RaceKeys", "Arduino", 100);
 ////////////////////// BUTTON MATRIX //////////////////////
 #define ROWS 4
 #define COLS 4
-// position on panel  UL, UR, LR, LL         UL = upper left   UR = upper right   LR = lower right   LL = lower left
 uint8_t rowPins[ROWS] = {27, 25, 12, 32};
 uint8_t colPins[COLS] = {17, 16, 00, 02};
 uint8_t keymap[ROWS][COLS] = {
@@ -23,7 +22,6 @@ Keypad customKeypad = Keypad( makeKeymap(keymap), rowPins, colPins, ROWS, COLS);
 
 //////////// ROTARY ENCODERS (WITH PUSH SWITCHES) ////////////
 #define MAXENC 5
-// position on panel   UL, UM, UR, LR, LL      UL = upper left   UM = upper middle UR = upper right   LR = lower right   LL = lower left
 uint8_t uppPin[MAXENC] = {36, 22, 39, 34, 19};
 uint8_t dwnPin[MAXENC] = {26, 21, 35, 14, 23};
 uint8_t prsPin[MAXENC] = {18, 15, 33, 13, 05};
