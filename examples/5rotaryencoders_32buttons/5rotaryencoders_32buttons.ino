@@ -8,31 +8,31 @@ BleGamepad bleGamepad("RaceKeys", "Arduino", 100);
 
 ////////////////////// BUTTON MATRIX //////////////////////
 #define ROWS 4
-#define COLS 4
-uint8_t rowPins[ROWS] = {27, 25, 12, 32};
-uint8_t colPins[COLS] = {17, 16, 00, 02};
+#define COLS 5
+uint8_t rowPins[ROWS] = {25, 26, 32, 33};
+uint8_t colPins[COLS] = {17, 18, 19, 23, 22};
 uint8_t keymap[ROWS][COLS] = {
-  {0,1,2,3},
-  {4,5,6,7},
-  {8,9,10,11},
-  {12,13,14,15}
+  {0,1,2,3,4},
+  {5,6,7,8,9},
+  {10,11,12,13,14},
+  {15,16,17,18}
 };
 Keypad customKeypad = Keypad( makeKeymap(keymap), rowPins, colPins, ROWS, COLS); 
 
 
 //////////// ROTARY ENCODERS (WITH PUSH SWITCHES) ////////////
-#define MAXENC 5
-uint8_t uppPin[MAXENC] = {36, 22, 39, 34, 19};
-uint8_t dwnPin[MAXENC] = {26, 21, 35, 14, 23};
-uint8_t prsPin[MAXENC] = {18, 15, 33, 13, 05};
-uint8_t encoderUpp[MAXENC] = {16,19,22,25,28};
-uint8_t encoderDwn[MAXENC] = {17,20,23,26,29};
-uint8_t encoderPrs[MAXENC] = {18,21,24,27,30};
+#define MAXENC 4
+uint8_t uppPin[MAXENC] = {04, 12, 15, 00};
+uint8_t dwnPin[MAXENC] = {05, 13, 16, 02};
+uint8_t prsPin[MAXENC] = {17, 18, 19, 23};
+uint8_t encoderUpp[MAXENC] = {20,23,26,29};
+uint8_t encoderDwn[MAXENC] = {21,24,27,30};
+uint8_t encoderPrs[MAXENC] = {22,25,28,31};
 ESP32Encoder encoder[MAXENC];
-unsigned long holdoff[MAXENC] = {0,0,0,0,0};
-int32_t prevenccntr[MAXENC] = {0,0,0,0,0};
-bool prevprs[MAXENC] = {0,0,0,0,0};
-#define HOLDOFFTIME 150   // TO PREVENT MULTIPLE ROTATE "CLICKS" WITH CHEAP ENCODERS WHEN ONLY ONE CLICK IS INTENDED
+unsigned long holdoff[MAXENC] = {0,0,0,0};
+int32_t prevenccntr[MAXENC] = {0,0,0,0};
+bool prevprs[MAXENC] = {0,0,0,0};
+#define HOLDOFFTIME 175   // TO PREVENT MULTIPLE ROTATE "CLICKS" WITH CHEAP ENCODERS WHEN ONLY ONE CLICK IS INTENDED
 
 
 
