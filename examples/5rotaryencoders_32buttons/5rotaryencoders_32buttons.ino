@@ -6,21 +6,21 @@
 BleGamepad bleGamepad("RaceKeys", "Arduino", 100);
 
 
-////////////////////// BUTTON MATRIX //////////////////////
+////////////////////// 16 BUTTON MATRIX //////////////////////
 #define ROWS 4
-#define COLS 5
+#define COLS 4
 uint8_t rowPins[ROWS] = {25, 26, 32, 33};
-uint8_t colPins[COLS] = {17, 18, 19, 23, 22};
+uint8_t colPins[COLS] = {17, 18, 19, 23};
 uint8_t keymap[ROWS][COLS] = {
-  {0,1,2,3,4},
-  {5,6,7,8,9},
-  {10,11,12,13,14},
-  {15,16,17,18}
+  {0,1,2,3},
+  {4,5,6,7},
+  {8,9,10,11},
+  {12,13,14,15}
 };
 Keypad customKeypad = Keypad( makeKeymap(keymap), rowPins, colPins, ROWS, COLS); 
 
 
-//////////// ROTARY ENCODERS (WITH PUSH SWITCHES) ////////////
+//////////// 4 ROTARY ENCODERS (WITH PUSH SWITCHES) ////////////
 #define MAXENC 4
 uint8_t uppPin[MAXENC] = {04, 12, 15, 00};
 uint8_t dwnPin[MAXENC] = {05, 13, 16, 02};
